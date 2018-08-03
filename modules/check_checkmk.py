@@ -94,7 +94,6 @@ class Check_df(Check_checkmk):
 
     def do_check(self):
         warnv, critv = self.params
-        self.status = 0
         value = int(self.columns[0])
         if value >= critv:
             self.crit()
