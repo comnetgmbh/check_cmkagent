@@ -35,8 +35,9 @@ class Check_checkmk():
         return cls.subclasses[check_type](columns, params)
 
 
-    def __init__(self, columns, params):
+    def __init__(self, columns, argument, params):
         self.columns = columns
+        self.argument = argument
         self.params = params
         self.perfdata = []
         self.status = 0
@@ -79,7 +80,7 @@ class Check_checkmk():
 
 
     def crit(self):
-        self.status = max(2, self.status)
+        self.status = 2
 
 
     def unknown(self):
