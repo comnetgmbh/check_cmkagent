@@ -63,8 +63,16 @@ class Check_cmkagent():
 
     def plugin_output(self, text):
         perfdata_text = []
-        for metric, value, warn, crit, minimum, maximum in self.perfdata:
-            perfdata_text.append('{0}={1},{2},{3},{4},{5}'.format(metric, value, warn, crit, minimum, maximum))
+        for entry in self.perfdata:
+            if len(entry) == 6:
+                metric, value, warn, crit, minimum, maximum = entry
+                perfdata_text.append('{0}={1},{2},{3},{4},{5}'.format(metric, value, warn, crit, minimum, maximum))
+            elif len(entry) == 2:
+                metric, value = entry
+                perfdata_text.append('{0} = {1}'.format(metric, value))
+            else:
+                #TODO: Need support for more different perdata format typed
+                continue
         print('{0} | {1}'.format(text, ' '.join(perfdata_text)))
 
 
