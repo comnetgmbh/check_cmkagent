@@ -125,7 +125,10 @@ class Check_df(Check_cmkagent):
                 unit_index += 1
             return '{:.2f} {}'.format(value, units[unit_index])
 
-        warnv, critv = map(float, self.params)
+        try:
+            warnv, critv = map(float, self.params)
+        except TypeError:
+            warnv, critv = None, None
         device, filesystem, size, used, avail, perc, mountpoint = self.columns
         usage_perc = float(used) / float(size) * 100
 
@@ -133,7 +136,10 @@ class Check_df(Check_cmkagent):
             self.crit()
         elif usage_perc >= warnv:
             self.warn()
-        perfdata = ('fs_used', usage_perc, warnv, critv, 0, 100)
+        if warnv and critv:
+            perfdata = ('fs_used', usage_perc, warnv, critv, 0, 100)
+        else:
+            perfdata = ('fs_used', usage_perc)
         self.append_to_perfdata(perfdata)
         self.plugin_output('{:.2f}% used ({} of {})'.format(usage_perc, calc_unit(used), calc_unit(size)))
         self.return_status()
