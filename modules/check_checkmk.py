@@ -66,6 +66,7 @@ class Check_checkmk():
         value_list = [str(value_tuple[0])]
         for value in value_tuple[1:]:
             if type(value) not in [float, int]:
+                print value_tuple
                 raise ValueError('Invalid value given as performance value')
             value_list.append(value)
         self.perfdata.append(tuple(value_list))
@@ -93,14 +94,38 @@ class Check_checkmk():
 @Check_checkmk.register_subclass('Check_df')
 class Check_df(Check_checkmk):
 
+    def parse_data(self):
+        parsed_data = []
+        is_inodes = False
+        for line in self.columns:
+            if '[df_inodes_start]' in line:
+                is_inodes = True
+            elif '[df_inodes_end]' in line:
+                is_inodes = False
+            if not is_inodes and line[-1] == self.argument:
+                parsed_data = line
+        return parsed_data
+
+
     def do_check(self):
-        warnv, critv = self.params
-        value = int(self.columns[0])
-        if value >= critv:
+        def calc_unit(value):
+            value = float(value)
+            units = ['KB', 'MB', 'GB', 'TB', 'PB']
+            unit_index = 0
+            while value > 1024 and unit_index < 4:
+                value = value / 1024
+                unit_index += 1
+            return '{:.2f} {}'.format(value, units[unit_index])
+
+        warnv, critv = map(float, self.params)
+        device, filesystem, size, used, avail, perc, mountpoint = self.parse_data()
+        usage_perc = float(used) / float(size) * 100
+
+        if usage_perc >= critv:
             self.crit()
-        elif value >= warnv:
+        elif usage_perc >= warnv:
             self.warn()
-        perfdata = ('test', value, warnv, critv, 0, 100)
+        perfdata = ('fs_used', usage_perc, warnv, critv, 0, 100)
         self.append_to_perfdata(perfdata)
-        self.plugin_output('Value: {}'.format(value))
+        self.plugin_output('{:.2f}% used ({} of {})'.format(usage_perc, calc_unit(used), calc_unit(size)))
         self.return_status()
