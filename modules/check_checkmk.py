@@ -25,14 +25,14 @@ class Check_checkmk():
 
 
     @classmethod
-    def check(cls, check_type, columns, params):
+    def check(cls, check_type, columns, argument, params):
         '''
             Register a new check
         '''
         if check_type not in cls.subclasses:
             raise ValueError('Check type not defined')
 
-        return cls.subclasses[check_type](columns, params)
+        return cls.subclasses[check_type](columns, argument, params)
 
 
     def __init__(self, columns, argument, params):

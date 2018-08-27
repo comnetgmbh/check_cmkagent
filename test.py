@@ -43,5 +43,4 @@ filename = DATA_PATH + '/' + args.host
 relevant_output = find_agent_section(filename, args.section)
 
 params = (args.warn, args.crit)
-test = check_checkmk.Check_checkmk.check(args.section, relevant_output, args.argument, params)
-
+test = check_checkmk.Check_checkmk.check('Check_' + args.section, relevant_output, args.argument, params)
