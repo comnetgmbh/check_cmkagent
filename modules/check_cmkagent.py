@@ -5,7 +5,7 @@ import sys
 #TODO Subclasses should be put in separate files
 #from modules import *
 
-class Check_checkmk():
+class Check_cmkagent():
     '''
         Base class for all checks
     '''
@@ -99,8 +99,8 @@ class Check_checkmk():
 
 
 
-@Check_checkmk.register_subclass('Check_df')
-class Check_df(Check_checkmk):
+@Check_cmkagent.register_subclass('Check_df')
+class Check_df(Check_cmkagent):
 
     def parse_data(self):
         parsed_data = []
