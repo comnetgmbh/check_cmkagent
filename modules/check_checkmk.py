@@ -41,6 +41,14 @@ class Check_checkmk():
         self.params = params
         self.perfdata = []
         self.status = 0
+
+        try:
+            self.columns = self.parse_data()
+        except:
+            raise NotImplementedError('Error in parse_data implementation'
+        if len(self.columns) == 0:
+            raise ValueError('Item not found in agent output')
+
         try:
             self.do_check()
         except AttributeError:
@@ -118,7 +126,7 @@ class Check_df(Check_checkmk):
             return '{:.2f} {}'.format(value, units[unit_index])
 
         warnv, critv = map(float, self.params)
-        device, filesystem, size, used, avail, perc, mountpoint = self.parse_data()
+        device, filesystem, size, used, avail, perc, mountpoint = self.columns
         usage_perc = float(used) / float(size) * 100
 
         if usage_perc >= critv:
