@@ -45,7 +45,7 @@ class Check_checkmk():
         try:
             self.columns = self.parse_data()
         except:
-            raise NotImplementedError('Error in parse_data implementation'
+            raise NotImplementedError('Error in parse_data implementation')
         if len(self.columns) == 0:
             raise ValueError('Item not found in agent output')
 
